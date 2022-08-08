@@ -1,3 +1,22 @@
+export type IsPositive<N extends number> = `${N}` extends `-${string}`
+  ? false
+  : true;
+
+export type IsInteger<N extends number> = `${N}` extends `${string}.${string}`
+  ? never
+  : `${N}` extends `-${string}.${string}`
+  ? never
+  : number;
+
+export type IsUint<N extends number> = IsPositive<N> extends true
+  ? IsInteger<N> extends number
+    ? number
+    : never
+  : never;
+
+///
+///
+
 export const UINT8_MAX_VALUE = 255;
 export const UINT16_MAX_VALUE = 65535;
 export const UINT32_MAX_VALUE = 4294967295;

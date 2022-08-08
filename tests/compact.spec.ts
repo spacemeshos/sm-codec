@@ -1,23 +1,23 @@
 import {
-  AnyCompact,
+  AnyCompactCodec,
   Compact16,
   Compact32,
   Compact64,
   Compact8,
-} from '../src/types/compact';
+} from '../src/codecs/compact';
 import {
   UINT16_MAX_VALUE,
   UINT32_MAX_VALUE,
   UINT64_MAX_VALUE,
   UINT8_MAX_VALUE,
-} from '../src/types/uints';
+} from '../src/utils/uints';
 
 describe('Compact types', () => {
   // Represents a scale Compact Integers codec enhanced with assertion
   // to have a value in a certain range (e.g. fit Uint16)
   const testCase = (
     name: string,
-    t: AnyCompact,
+    t: AnyCompactCodec,
     testPairs: [bigint, number[]][],
     maxValue: number | bigint
   ) => {

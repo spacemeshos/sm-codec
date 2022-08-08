@@ -1,9 +1,8 @@
-import { CodecType } from 'scale-ts';
-import { Nonce } from '../src/types/core';
+import { Nonce } from '../src/codecs/core';
 
 describe('Core codecs', () => {
   describe('Nonce', () => {
-    const roundtripCase = (nonce: CodecType<typeof Nonce>) => {
+    const roundtripCase = (nonce: Nonce) => {
       it(`encodes & decodes { Counter: ${nonce.Counter}, Bitfield: ${nonce.Bitfield} }`, () => {
         const enc = Nonce.enc(nonce);
         expect(enc instanceof Uint8Array).toBeTruthy();

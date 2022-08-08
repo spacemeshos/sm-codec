@@ -41,6 +41,8 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@spacemeshos/address-wasm": "git://github.com:spacemeshos/address-wasm.git#484859073cbdaac87beb706c2df8fc2b7ba153eb",
+    "address-wasm": "^0.0.1",
     "scale-ts": "^0.2.11"
   }
 }

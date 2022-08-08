@@ -607,6 +607,12 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@spacemeshos/address-wasm@/Users/brusher/Work/spacemeshos/address-wasm":
+  version "0.0.1"
+
+"@spacemeshos/address-wasm@file:../address-wasm":
+  version "0.0.1"
+
 "@types/babel__core@^7.1.14":
   version "7.1.19"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.19.tgz#7b497495b7d1b4812bdb9d02804d0576f43ee460"

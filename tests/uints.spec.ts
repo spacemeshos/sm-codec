@@ -8,7 +8,7 @@ import {
   UINT32_MAX_VALUE,
   UINT64_MAX_VALUE,
   UINT8_MAX_VALUE,
-} from '../src/types/uints';
+} from '../src/utils/uints';
 
 describe('Uint constructors', () => {
   const testCase = (
