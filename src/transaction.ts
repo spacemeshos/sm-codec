@@ -24,6 +24,8 @@ export interface TransactionData<T extends Payload> {
   Signatures?: MultiSig;
 }
 
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
 class Transaction<
   T extends Payload,
   S extends Codec<SingleSig> | Codec<MultiSig>
@@ -61,7 +63,7 @@ class Transaction<
       Payload: payload,
     });
   }
-  principal(hrp: string, spawnPayload: T) {
+  principal(hrp: string, spawnPayload: Optional<T, 'TemplateAddress'>) {
     if (this.mehtodSelector !== 0n) {
       // TODO: Support Spawn Transactions
       throw new Error(

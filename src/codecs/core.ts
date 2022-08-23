@@ -1,14 +1,9 @@
-import { CodecType, str, Struct } from 'scale-ts';
-import { Hash32 } from './common';
+import { Bytes, CodecType, str, Struct } from 'scale-ts';
 import { Compact32, Compact8 } from './compact';
-
-export const ZERO = Compact8.enc(0n);
-export const ONE = Compact8.enc(1n);
-
 export const Address = str;
 export type Address = CodecType<typeof Address>;
 
-export const PublicKey = Hash32;
+export const PublicKey = Bytes(32);
 export type PublicKey = CodecType<typeof PublicKey>;
 
 export const Nonce = Struct({

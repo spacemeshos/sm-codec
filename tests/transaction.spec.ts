@@ -42,7 +42,9 @@ describe('Transaction', () => {
 
   describe('principal', () => {
     it('calculates principal address', async () => {
-      const actual = await tx.principal('sm', decodedPayload);
+      const actual = await tx.principal('sm', {
+        Arguments: decodedPayload.Arguments,
+      });
       expect(actual).toEqual(principal);
     });
     it('throws an error if methodSelector != 0', async () => {
@@ -55,11 +57,15 @@ describe('Transaction', () => {
         }),
         sigCodec: SingleSig,
       });
-      const t = () =>
-        spendTx.principal('sm', {
-          Recipient: '',
+      const t = () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore — used here just to ensure that in JS-world it
+        //              will throw an error
+        return spendTx.principal('sm', {
+          Recipient: principal,
           Amount: 100n,
         });
+      };
       expect(t).toThrowError();
     });
   });

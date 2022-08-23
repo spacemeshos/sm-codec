@@ -14,6 +14,7 @@ export const SpawnArguments = Struct({
 });
 
 export const SpawnPayload = Struct({
+  TemplateAddress: Address,
   Arguments: SpawnArguments,
   GasPrice,
 });

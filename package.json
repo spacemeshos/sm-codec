@@ -1,6 +1,6 @@
 {
-  "name": "@spacemesh/codec",
-  "version": "0.0.1",
+  "name": "@spacemesh/sm-codec",
+  "version": "0.1.0",
   "description": "",
   "main": "./lib/index.js",
   "scripts": {

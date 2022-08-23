@@ -1,35 +1,72 @@
+## @spacemesh/sm-codec
+
+TypeScript library provides easy way to encode, decode, and sign transactions.
+
+See usage examples below:
+
 ```js
+// Import
+import {
+  TemplateRegistry,
+  SINGLE_SIG_TEMPLATE_ADDRESS,
+  SpawnPayload,
+  hash,
+} from '@spacemesh/sm-codec';
+import ed25519 from '@spacemesh/ed25519-wasm';
+
 // Usage
 
-//
-const tpl = TemplateRegistry.get(addr, 2);
-const rawTx = tpl.encode({
-  arg0: 1,
-  arg1: 2,
-  arg2: 'hello, world',
-});
-const signedTx = tpl.sign(rawTx, pk0);
+// TemplateRegistry has pre-registered templates.
+// You can also register your own templates. See below.
 
-//
-const multisig = TemplateRegistry.get(addr_mult, 0);
-const rawTx = multisig.encode({
-  publicKeys: [
-    pk0,
-    pk1,
-    pk2,
-  ]
-});
-const signedTx = multisig.sign(rawTx, [sig0, sig2]);
+// Single Sig account spawning
+const spawnSingleSig = TemplateRegistry.get(SINGLE_SIG_TEMPLATE_ADDRESS, 0);
+// Prepare SpawnPayload
+const spawnPayload: SpawnPayload = {
+  Arguments: {
+    PublicKey: Uint8Array.from([/* your public key */]),
+  },
+};
+// Calculate Principal address (of your new account)
+const principal = spawnSingleSig.principal(spawnPayload);
+// Encode SpawnTransaction
+const rawTx = spawnSingleSig.encode(principal, spawnPayload);
+// Get transaction hash, it is used in signing
+const txHash = hash(rawTx);
+// Then use `ed25519` library to sign the hash with your private key
+const sig = ed25519.sign(myPrivateKey, txHash);
+// And finally sign tx (actualy it concatenates bytes)
+const signedTx = tpl.sign(rawTx, sig);
+```
 
-// Creating
-const templateSingleSig = new Template({
-  address: 'sm1qqqqa2f142...123',
+Example of creating your own template:
+```js
+import { TemplateRegistry, asTemplate, PublicKey, SingleSig } from '@spacemesh/sm-codec';
+import { Struct, str } from 'scale-ts';
+
+const spawnCodec = Struct({
+  Owner: PublicKey,
+  Nonce: str,
+});
+const saySmthCodec = Struct({
+  message: str,
+})
+
+// Address of the template in the network
+const address = 'sm1qqqqa2f142...123';
+
+// Creating own templates
+const myTemplate = asTemplate({
+  address,
   methods: {
-    0: [SpawnPayloadCodec, SingleSig],
-    1: [SpendPayloadCodec, SingleSig],
+    0: [spawnCodec, SingleSig],
+    1: [saySmthCodec, SingleSig],
   },
 });
-TemplateRegistry.register(addr, templateSingleSig);
 
-//
+// Add it to registry
+TemplateRegistry.register(address, templateSingleSig);
+
+// And then use it as described above
+const spawnMyAddr = TemplateRegistry.get(address, 0);
 ```
