@@ -1,9 +1,16 @@
 import { Codec } from 'scale-ts';
+import { Context } from './codecs/core';
 import { MultiSig, SingleSig } from './codecs/signatures';
 export interface Template {
   address: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  methods: Record<number, [Codec<any>, Codec<SingleSig> | Codec<MultiSig>]>; //TemplateMethodsMap<T>;
+  methods: Record<
+    number,
+    [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Codec<any> | ((ctx: Context) => Codec<any>),
+      Codec<SingleSig> | Codec<MultiSig>
+    ]
+  >; //TemplateMethodsMap<T>;
 }
 
 export const asTemplate = (t: Template): Template => t;

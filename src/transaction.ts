@@ -1,11 +1,12 @@
-import { Address } from './codecs/core';
+import { Address, Context } from './codecs/core';
 import { Uint8 } from './utils/uints';
 import { SingleSig, MultiSig, isMultiSigData } from './codecs/signatures';
 import { Codec, Struct } from 'scale-ts';
 import TxCodec from './codecs/tx';
-import Bech32 from '@spacemeshos/address-wasm';
 import { concatBytes } from './utils/bytes';
 import { sha256 } from './utils/crypto';
+import { deriveHrpFromAddress, HRP } from './hrp';
+import { Bech32 } from '@spacemesh/address-wasm';
 
 export interface Payload {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,28 +32,38 @@ class Transaction<
   S extends Codec<SingleSig> | Codec<MultiSig>
 > {
   private type = 0n;
+  private hrp: HRP;
   private address: Address;
   private mehtodSelector: bigint;
-  private payloadCodec: Codec<T>;
+  public payloadCodec: Codec<T> | ((ctx: Context) => Codec<T>);
   private codec: Codec<TransactionData<T>>;
   private sigCodec: S;
+  private context: Context;
 
-  constructor({
-    address,
-    methodSelector,
-    payloadCodec,
-    sigCodec,
-  }: {
-    address: Address;
-    methodSelector: number;
-    payloadCodec: Codec<T>;
-    sigCodec: S;
-  }) {
+  constructor(
+    {
+      address,
+      methodSelector,
+      payloadCodec,
+      sigCodec,
+    }: {
+      address: Address;
+      methodSelector: number;
+      payloadCodec: Codec<T> | ((ctx: Context) => Codec<T>);
+      sigCodec: S;
+    },
+    bech32: Bech32
+  ) {
     this.address = address;
+    this.hrp = deriveHrpFromAddress(address);
     this.mehtodSelector = BigInt(methodSelector);
     this.payloadCodec = payloadCodec;
     this.sigCodec = sigCodec;
-    this.codec = TxCodec(this.payloadCodec);
+    this.context = {
+      hrp: this.hrp,
+      bech32,
+    };
+    this.codec = TxCodec(this.payloadCodec)(this.context);
   }
 
   encode(principal: string, payload: T) {
@@ -70,17 +81,20 @@ class Transaction<
         'Principal address can be computed from Self-Spawn Transaction only'
       );
     }
-    return Bech32(hrp).then((b32) => {
-      const bytes = concatBytes(
-        Address.enc(this.address),
-        (this.payloadCodec as unknown as Codec<SpawnPayload>).enc({
-          TemplateAddress: this.address,
-          Arguments: spawnPayload.Arguments,
-        } as SpawnPayload)
-      );
-      const addr = sha256(bytes).slice(12);
-      return b32.generateAddress(addr);
-    });
+    const payloadCodec =
+      typeof this.payloadCodec === 'function'
+        ? this.payloadCodec(this.context)
+        : this.payloadCodec;
+
+    const bytes = concatBytes(
+      Address(this.context).enc(this.address),
+      (payloadCodec as unknown as Codec<SpawnPayload>).enc({
+        TemplateAddress: this.address,
+        Arguments: spawnPayload.Arguments,
+      } as SpawnPayload)
+    );
+    const addr = sha256(bytes).slice(12);
+    return this.context.bech32.generateAddress(addr, this.hrp);
   }
   decode(bytes: Uint8Array) {
     const codec = Struct({

@@ -14,59 +14,65 @@ import {
 } from '@spacemesh/sm-codec';
 import ed25519 from '@spacemesh/ed25519-wasm';
 
-// Usage
+(async () => {
+  // Usage
 
-// TemplateRegistry has pre-registered templates.
-// You can also register your own templates. See below.
+  // TemplateRegistry has pre-registered templates.
+  // You can also register your own templates. See below.
 
-// Single Sig account spawning
-const spawnSingleSig = TemplateRegistry.get(SINGLE_SIG_TEMPLATE_ADDRESS, 0);
-// Prepare SpawnPayload
-const spawnPayload: SpawnPayload = {
-  Arguments: {
-    PublicKey: Uint8Array.from([/* your public key */]),
-  },
-};
-// Calculate Principal address (of your new account)
-const principal = spawnSingleSig.principal(spawnPayload);
-// Encode SpawnTransaction
-const rawTx = spawnSingleSig.encode(principal, spawnPayload);
-// Get transaction hash, it is used in signing
-const txHash = hash(rawTx);
-// Then use `ed25519` library to sign the hash with your private key
-const sig = ed25519.sign(myPrivateKey, txHash);
-// And finally sign tx (actualy it concatenates bytes)
-const signedTx = tpl.sign(rawTx, sig);
-```
+  // Single Sig account spawning
+  const spawnSingleSig = TemplateRegistry.get(
+    SINGLE_SIG_TEMPLATE_ADDRESS,
+    0
+  );
+  // Prepare SpawnPayload
+  const spawnPayload: SpawnPayload = {
+    Arguments: {
+      PublicKey: Uint8Array.from([/* your public key: 32 bytes */]),
+    },
+  };
+  // Calculate Principal address (of your new account)
+  const principal = spawnSingleSig.principal(HRP.MainNet, spawnPayload);
+  // Encode SpawnTransaction
+  const rawTx = spawnSingleSig.encode(principal, spawnPayload);
+  // Get transaction hash, it is used in signing
+  const txHash = hash(rawTx);
+  // Then use `ed25519` library to sign the hash with your private key
+  const sig = ed25519.sign(myPrivateKey, txHash);
+  // And finally sign tx (actualy it concatenates bytes)
+  const signedTx = tpl.sign(rawTx, sig);
+  ```
 
-Example of creating your own template:
-```js
-import { TemplateRegistry, asTemplate, PublicKey, SingleSig } from '@spacemesh/sm-codec';
-import { Struct, str } from 'scale-ts';
+  Example of creating your own template:
+  ```js
+  import { TemplateRegistry, asTemplate, PublicKey, SingleSig } from '@spacemesh/sm-codec';
+  import { Struct, str } from 'scale-ts';
 
-const spawnCodec = Struct({
-  Owner: PublicKey,
-  Nonce: str,
-});
-const saySmthCodec = Struct({
-  message: str,
-})
+  const spawnCodec = Struct({
+    Owner: PublicKey,
+    Nonce: str,
+  });
+  const saySmthCodec = Struct({
+    message: str,
+  })
 
-// Address of the template in the network
-const address = 'sm1qqqqa2f142...123';
+  // Address of the template in the network
+  const address = 'sm1qqqqa2f142...123';
 
-// Creating own templates
-const myTemplate = asTemplate({
-  address,
-  methods: {
-    0: [spawnCodec, SingleSig],
-    1: [saySmthCodec, SingleSig],
-  },
-});
+  // Creating own templates
+  const myTemplate = asTemplate({
+    address,
+    methods: {
+      0: [spawnCodec, SingleSig],
+      1: [saySmthCodec, SingleSig],
+    },
+  });
 
-// Add it to registry
-TemplateRegistry.register(address, templateSingleSig);
+  // Add it to registry
+  TemplateRegistry.register(address, myTemplate);
 
-// And then use it as described above
-const spawnMyAddr = TemplateRegistry.get(address, 0);
+  // And then use it as described above
+  const spawnMyAddr = TemplateRegistry.get(address, 0);
+
+})();
 ```
