@@ -1,6 +1,6 @@
 {
   "name": "@spacemesh/sm-codec",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Spacemesh Transaction Codec library",
   "main": "./lib/index.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@spacemesh/address-wasm": "^0.1.1",
+    "@spacemesh/address-wasm": "^0.1.2",
     "scale-ts": "^0.2.11"
   }
 }
