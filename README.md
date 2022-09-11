@@ -32,7 +32,7 @@ import ed25519 from '@spacemesh/ed25519-wasm';
     },
   };
   // Calculate Principal address (of your new account)
-  const principal = spawnSingleSig.principal(HRP.MainNet, spawnPayload);
+  const principal = spawnSingleSig.principal(spawnPayload);
   // Encode SpawnTransaction
   const rawTx = spawnSingleSig.encode(principal, spawnPayload);
   // Get transaction hash, it is used in signing
@@ -57,11 +57,17 @@ import ed25519 from '@spacemesh/ed25519-wasm';
   })
 
   // Address of the template in the network
-  const address = 'sm1qqqqa2f142...123';
+  // 24 bytes length
+  const address = Uint8Array.from([
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1,
+  ]);
 
   // Creating own templates
   const myTemplate = asTemplate({
-    address,
+    publicKey,
     methods: {
       0: [spawnCodec, SingleSig],
       1: [saySmthCodec, SingleSig],

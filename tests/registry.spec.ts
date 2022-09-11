@@ -1,46 +1,33 @@
-import { Codec } from 'scale-ts';
+import { Codec, CodecType, Struct } from 'scale-ts';
 import { Compact32 } from '../src/codecs/compact';
-import { Address, CodecType, Struct } from '../src/codecs/core';
+import { Address } from '../src/codecs/core';
 import { SingleSig } from '../src/codecs/signatures';
-import {
-  SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS,
+import SingleSigTemplate, {
+  SINGLE_SIG_TEMPLATE_ADDRESS,
   SpawnPayload,
 } from '../src/std/singlesig';
-import { HRP } from '../src/hrp';
 import TemplateRegistry from '../src/registry';
 import { asTemplate } from '../src/template';
 import Transaction from '../src/transaction';
+import Bech32 from '@spacemesh/address-wasm';
+import { padAddress } from '../src/utils/padBytes';
 
 describe('TemplateRegistry', () => {
-  beforeAll(() => TemplateRegistry.init());
-
-  const tplAddr = 'stest1qqqq123456789abcdef';
+  const tplAddr = padAddress([101]);
   const tpl = asTemplate({
-    address: tplAddr,
+    publicKey: tplAddr,
     methods: {
       0: [Struct({ TemplateAddress: Address }), SingleSig],
       1: [Struct({ Recipient: Address, Amount: Compact32 }), SingleSig],
     },
   });
 
-  it('address()', async () => {
-    const pubKey = Uint8Array.from([
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-    ]);
-    const main = TemplateRegistry.address(pubKey, HRP.MainNet);
-    const test = TemplateRegistry.address(pubKey, HRP.TestNet);
-    expect(test).toEqual('stest1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqgf0ae28');
-    expect(main).toEqual('sm1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqg56ypy7');
-  });
-
   it('standard templates are accessible by default', () => {
-    expect(TemplateRegistry.templates).toHaveProperty(
-      SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS
-    );
+    expect(TemplateRegistry.templates).toHaveProperty(SingleSigTemplate.key);
   });
   it('register()', () => {
     TemplateRegistry.register(tpl);
-    expect(TemplateRegistry.templates).toHaveProperty(tplAddr);
+    expect(TemplateRegistry.templates).toHaveProperty(tpl.key);
     const tx = TemplateRegistry.get(tplAddr, 0);
     expect(tx).toBeInstanceOf(Transaction);
   });
@@ -57,15 +44,18 @@ describe('TemplateRegistry', () => {
       0, 204, 228, 107, 148, 13, 244, 172, 6,
     ]);
     const tpl = TemplateRegistry.get(
-      SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS,
+      SINGLE_SIG_TEMPLATE_ADDRESS,
       0
     ) as Transaction<CodecType<typeof SpawnPayload>, Codec<SingleSig>>;
     const tx = tpl.decode(raw);
 
     const encodedByTpl = tpl.encode(
-      'stest1qqqqqqrtp6zw0s8rcdlnwz88ueawft0vw490xlc095s8l',
+      Uint8Array.from([
+        0, 0, 0, 0, 107, 14, 132, 231, 192, 227, 195, 127, 55, 8, 231, 230, 122,
+        228, 173, 236, 117, 74, 243, 127,
+      ]),
       {
-        TemplateAddress: SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS,
+        TemplateAddress: SINGLE_SIG_TEMPLATE_ADDRESS,
         Arguments: {
           PublicKey: Uint8Array.from([
             106, 188, 184, 128, 131, 1, 34, 6, 64, 212, 119, 57, 43, 116, 14,

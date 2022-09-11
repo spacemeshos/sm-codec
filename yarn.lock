@@ -607,10 +607,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@spacemesh/address-wasm@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@spacemesh/address-wasm/-/address-wasm-0.1.2.tgz#a6fb7137fc3f68f556be32b3ab541fe74027e1c6"
-  integrity sha512-BsAw7LRyLbUwD/TwQWZd2/aACuZzScCnbfyrIawwyfikZtmzUl25sPYSHwmTXkE+N8n6kAbd28w3qW5i7xa4tg==
+"@spacemesh/address-wasm@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@spacemesh/address-wasm/-/address-wasm-0.2.0.tgz#7773efb5013292bd787f02f0b47fa4b4fa128145"
+  integrity sha512-Q1ZQq0swhLPrz3WqOF09Umgq6L99k5aNVsa103Ne+doEMmpiSR8puLUBY9yReeqM/70AE8SAGBbvsg9YSCVnAg==
 
 "@types/babel__core@^7.1.14":
   version "7.1.19"

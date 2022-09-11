@@ -1,14 +1,21 @@
-import initBech32, { Bech32 } from '@spacemesh/address-wasm';
+import Bech32 from '@spacemesh/address-wasm';
+import { Struct } from 'scale-ts';
 import { Compact32 } from '../src/codecs/compact';
-import { Address, PublicKey, Struct } from '../src/codecs/core';
+import { Address, PublicKey } from '../src/codecs/core';
 import { SingleSig } from '../src/codecs/signatures';
 import Transaction, { TransactionData } from '../src/transaction';
 
 const uint8range = (n: number) => Uint8Array.from([...Array(n).keys()]);
 
 describe('Transaction', () => {
-  const principal = 'sm1qqqqqqzhdpalehrzuzuf8ukptfse96y20m0ke6gxl4kwa';
-  const tplAddr = 'sm1qqqqqqqncn5ulxuhj7qzfdk928tv8a65sky0nags82gqh';
+  const principal = Uint8Array.from([
+    0, 0, 0, 0, 87, 104, 123, 252, 220, 98, 224, 184, 147, 242, 193, 90, 97,
+    146, 232, 138, 126, 223, 108, 233,
+  ]);
+  const tplAddr = Uint8Array.from([
+    0, 0, 0, 0, 19, 196, 233, 207, 155, 151, 151, 128, 36, 182, 197, 81, 214,
+    195, 247, 84, 133, 136, 249, 245,
+  ]);
   const decodedPayload = {
     TemplateAddress: tplAddr,
     Arguments: uint8range(32),
@@ -38,37 +45,34 @@ describe('Transaction', () => {
   };
 
   let tx: Transaction<typeof decodedPayload, typeof SingleSig>;
-  let bech32: Bech32;
   beforeAll(async () => {
-    bech32 = await initBech32('sm');
-    tx = new Transaction(txOptions, bech32);
+    tx = new Transaction(txOptions);
   });
 
   describe('principal', () => {
     it('calculates principal address', async () => {
-      const actual = tx.principal('sm', {
+      const actual0 = tx.principal({
         Arguments: decodedPayload.Arguments,
       });
-      expect(actual).toEqual(principal);
+      expect(actual0).toEqual(principal);
+      const actual1 = tx.principal(decodedPayload);
+      expect(actual1).toEqual(principal);
     });
     it('throws an error if methodSelector != 0', async () => {
-      const spendTx = new Transaction(
-        {
-          address: tplAddr,
-          methodSelector: 1,
-          payloadCodec: Struct({
-            Recipient: Address,
-            Amount: Compact32,
-          }),
-          sigCodec: SingleSig,
-        },
-        bech32
-      );
+      const spendTx = new Transaction({
+        address: tplAddr,
+        methodSelector: 1,
+        payloadCodec: Struct({
+          Recipient: Address,
+          Amount: Compact32,
+        }),
+        sigCodec: SingleSig,
+      });
       const t = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore — used here just to ensure that in JS-world it
         //              will throw an error
-        return spendTx.principal('sm', {
+        return spendTx.principal({
           Recipient: principal,
           Amount: 100n,
         });

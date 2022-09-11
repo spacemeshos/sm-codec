@@ -1,11 +1,9 @@
-import { Codec } from 'scale-ts';
-import { TransactionData, Payload } from '../transaction';
+import { Codec, Struct } from 'scale-ts';
+import { Payload } from '../transaction';
 import { Compact8 } from './compact';
-import { Address, Context, Struct } from './core';
+import { Address } from './core';
 
-const TxCodec = <T extends Payload>(
-  txCodec: Codec<T> | ((ctx: Context) => Codec<T>)
-): ((ctx: Context) => Codec<TransactionData<T>>) =>
+const TxCodec = <T extends Payload>(txCodec: Codec<T>) =>
   Struct({
     TransactionType: Compact8,
     Principal: Address,

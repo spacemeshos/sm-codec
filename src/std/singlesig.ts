@@ -1,14 +1,12 @@
+import { Struct } from 'scale-ts';
 import { Compact32 } from '../codecs/compact';
-import { Address, GasPrice, Nonce, PublicKey, Struct } from '../codecs/core';
+import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
-import { asTemplate } from '../template';
+import { asTemplate, Template } from '../template';
+import { padAddress } from '../utils/padBytes';
 
 // Constants
-export const SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS =
-  'stest1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqgf0ae28';
-
-export const SINGLE_SIG_TEMPLATE_ADDRESS =
-  'sm1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqg56ypy7';
+export const SINGLE_SIG_TEMPLATE_ADDRESS = padAddress([1]);
 
 // Codecs
 export const SpawnArguments = Struct({
@@ -32,23 +30,13 @@ export const SpendPayload = Struct({
   GasPrice,
 });
 
-// Templates
-const tpl = (address: string) =>
-  asTemplate({
-    address,
-    methods: {
-      0: [SpawnPayload, SingleSig],
-      1: [SpendPayload, SingleSig],
-    },
-  });
+// Template
+export const SingleSigTemplate = asTemplate({
+  publicKey: SINGLE_SIG_TEMPLATE_ADDRESS,
+  methods: {
+    0: [SpawnPayload, SingleSig],
+    1: [SpendPayload, SingleSig],
+  },
+});
 
-export const SingleSigTemplateTestnet = tpl(
-  SINGLE_SIG_TEMPLATE_TESTNET_ADDRESS
-);
-export const SingleSigTemplateMainnet = tpl(SINGLE_SIG_TEMPLATE_ADDRESS);
-
-export const SingleSigTemplates = [
-  SingleSigTemplateTestnet,
-  SingleSigTemplateMainnet,
-];
-export default SingleSigTemplates;
+export default SingleSigTemplate;

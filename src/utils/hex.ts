@@ -18,5 +18,11 @@ export const hexToBytes = (hex: HexString) =>
       .reduce((acc, next) => [...acc, parseInt(next, 16)], <number[]>[])
   );
 
+export const toBytes = (input: HexString | Uint8Array | number[]): Uint8Array =>
+  typeof input === 'string' ? hexToBytes(input) : Uint8Array.from(input);
+
+export const toHex = (input: HexString | Uint8Array | number[]): HexString =>
+  typeof input === 'string' ? input : bytesToHex(input);
+
 export const isHexString = (str: unknown): str is HexString =>
   typeof str === 'string' && /^(0x)?([0-9a-f]{2})+$/i.test(str);
