@@ -7,3 +7,4 @@ export * from './codecs/core';
 export * from './codecs/compact';
 export * from './codecs/signatures';
 export { StdTemplates, StdPublicKeys } from './std';
+export { default as SingleSigTemplate } from './std/singlesig';

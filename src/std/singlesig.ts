@@ -1,42 +1,58 @@
-import { Struct } from 'scale-ts';
+import { Codec, Struct } from 'scale-ts';
 import { Compact32 } from '../codecs/compact';
 import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
-import { asTemplate, Template } from '../template';
+import Transaction from '../transaction';
+import { bytesToHex } from '../utils/hex';
 import { padAddress } from '../utils/padBytes';
 
 // Constants
 export const SINGLE_SIG_TEMPLATE_ADDRESS = padAddress([1]);
 
 // Codecs
-export const SpawnArguments = Struct({
+const SpawnArguments = Struct({
   PublicKey,
 });
 
-export const SpawnPayload = Struct({
+const SpawnPayload = Struct({
   TemplateAddress: Address,
   Arguments: SpawnArguments,
   GasPrice,
 });
 
-export const SpendArguments = Struct({
+const SpendArguments = Struct({
   Destination: Address,
   Amount: Compact32,
 });
 
-export const SpendPayload = Struct({
+const SpendPayload = Struct({
   Arguments: SpendArguments,
   Nonce,
   GasPrice,
 });
 
 // Template
-export const SingleSigTemplate = asTemplate({
+const newT = <T, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
+  new Transaction({
+    address: SINGLE_SIG_TEMPLATE_ADDRESS,
+    methodSelector: n,
+    spawnArgsCodec: SpawnArguments,
+    payloadCodec: pc,
+    sigCodec: sig,
+  });
+
+export const Methods = {
+  Spawn: newT(0, SpawnPayload, SingleSig),
+  Spend: newT(1, SpendPayload, SingleSig),
+};
+
+const SingleSigTemplate = {
+  key: bytesToHex(SINGLE_SIG_TEMPLATE_ADDRESS),
   publicKey: SINGLE_SIG_TEMPLATE_ADDRESS,
   methods: {
-    0: [SpawnPayload, SingleSig],
-    1: [SpendPayload, SingleSig],
-  },
-});
+    0: Methods.Spawn,
+    1: Methods.Spend,
+  } as const,
+};
 
 export default SingleSigTemplate;

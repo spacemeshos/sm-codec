@@ -66,11 +66,24 @@ import ed25519 from '@spacemesh/ed25519-wasm';
   ]);
 
   // Creating own templates
-  const myTemplate = asTemplate({
-    publicKey,
+  const myTemplate = {
+    key: toHex(address),
+    publicKey: address,
     methods: {
-      0: [spawnCodec, SingleSig],
-      1: [saySmthCodec, SingleSig],
+      0: new Transaction({
+        address: publicKey,
+        methodSelector: 0,
+        spawnArgsCodec: PublicKey,
+        payloadCodec: spawnCodec,
+        sigCodec: SingleSig,
+      }),
+      1: new Transaction({
+        address: SINGLE_SIG_TEMPLATE_ADDRESS,
+        methodSelector: n,
+        spawnArgsCodec: SpawnArguments,
+        payloadCodec: saySmthCodec,
+        sigCodec: SingleSig,
+      }),
     },
   });
 
