@@ -16,8 +16,9 @@ const SpawnArguments = Struct({
 
 const SpawnPayload = Struct({
   TemplateAddress: Address,
-  Arguments: SpawnArguments,
+  Nonce,
   GasPrice,
+  Arguments: SpawnArguments,
 });
 
 const SpendArguments = Struct({

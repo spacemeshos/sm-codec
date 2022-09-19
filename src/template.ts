@@ -1,5 +1,5 @@
 import Transaction from './transaction';
-import { bytesToHex, HexString } from './utils/hex';
+import { HexString } from './utils/hex';
 export interface Template {
   key: HexString; // hex representation of publicKey
   publicKey: Uint8Array;

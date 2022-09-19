@@ -612,6 +612,13 @@
   resolved "https://registry.yarnpkg.com/@spacemesh/address-wasm/-/address-wasm-0.2.0.tgz#7773efb5013292bd787f02f0b47fa4b4fa128145"
   integrity sha512-Q1ZQq0swhLPrz3WqOF09Umgq6L99k5aNVsa103Ne+doEMmpiSR8puLUBY9yReeqM/70AE8SAGBbvsg9YSCVnAg==
 
+"@spacemesh/sm-codec@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@spacemesh/sm-codec/-/sm-codec-0.2.1.tgz#99a8ee0cfed126d67325929c372554ba0bb19713"
+  integrity sha512-XIbUeaK9XYQhOmox/fEPvwQyvzxTPWEsBpj4+t7aDj9E2IYFoA9Aou8kqmtBmOj+QKbs+qZlNJOJxeNtFrD7Zg==
+  dependencies:
+    scale-ts "^0.2.11"
+
 "@types/babel__core@^7.1.14":
   version "7.1.19"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.19.tgz#7b497495b7d1b4812bdb9d02804d0576f43ee460"
