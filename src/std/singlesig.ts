@@ -27,9 +27,9 @@ const SpendArguments = Struct({
 });
 
 const SpendPayload = Struct({
-  Arguments: SpendArguments,
   Nonce,
   GasPrice,
+  Arguments: SpendArguments,
 });
 
 // Template
