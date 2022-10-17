@@ -1,10 +1,23 @@
-import SingleSigAccount, {
-  SINGLE_SIG_TEMPLATE_ADDRESS,
-} from '../src/std/singlesig';
+import SingleSigAccount from '../src/std/singlesig';
 import { serializeBigInts } from './utils';
 
 describe('SingleSigTemplate', () => {
-  it('golden: spawn', () => {
+  it('principal', () => {
+    const pk = Uint8Array.from([
+      104, 61, 219, 54, 160, 74, 208, 93, 115, 72, 5, 131, 19, 195, 246, 51,
+      245, 186, 201, 233, 115, 202, 18, 253, 57, 147, 38, 196, 33, 66, 18, 250,
+    ]);
+    const tpl = SingleSigAccount.methods[0];
+    const principal = tpl.principal({ PublicKey: pk });
+
+    expect(principal).toEqual(
+      Uint8Array.from([
+        0, 0, 0, 0, 143, 30, 80, 73, 164, 143, 104, 48, 129, 2, 87, 111, 43, 66,
+        140, 36, 39, 112, 198, 28,
+      ])
+    );
+  });
+  it('spawn', () => {
     const tpl = SingleSigAccount.methods[0];
 
     const raw = Uint8Array.from([
@@ -31,7 +44,6 @@ describe('SingleSigTemplate', () => {
         228, 173, 236, 117, 74, 243, 127,
       ]),
       {
-        TemplateAddress: SINGLE_SIG_TEMPLATE_ADDRESS,
         Nonce: {
           Counter: 0n,
           Bitfield: 0n,
@@ -51,7 +63,7 @@ describe('SingleSigTemplate', () => {
     const tx = tpl.decode(raw);
     expect(serializeBigInts(tx)).toEqual(serializeBigInts(expected));
   });
-  it('golden: spend', () => {
+  it('spend', () => {
     const tpl = SingleSigAccount.methods[1];
     const principal = Uint8Array.from([
       0, 0, 0, 0, 107, 14, 132, 231, 192, 227, 195, 127, 55, 8, 231, 230, 122,

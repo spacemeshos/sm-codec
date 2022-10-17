@@ -2,6 +2,7 @@ import { Codec, Struct } from 'scale-ts';
 import { Compact32 } from '../codecs/compact';
 import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
+import withTemplateAddress from '../codecs/withTemplateAddress';
 import Transaction from '../transaction';
 import { bytesToHex } from '../utils/hex';
 import { padAddress } from '../utils/padBytes';
@@ -15,7 +16,6 @@ const SpawnArguments = Struct({
 });
 
 const SpawnPayload = Struct({
-  TemplateAddress: Address,
   Nonce,
   GasPrice,
   Arguments: SpawnArguments,
@@ -43,7 +43,11 @@ const newT = <T, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
   });
 
 export const Methods = {
-  Spawn: newT(0, SpawnPayload, SingleSig),
+  Spawn: newT(
+    0,
+    withTemplateAddress(SINGLE_SIG_TEMPLATE_ADDRESS, SpawnPayload),
+    SingleSig
+  ),
   Spend: newT(1, SpendPayload, SingleSig),
 };
 
