@@ -1,5 +1,5 @@
 import { Codec, Struct } from 'scale-ts';
-import { Compact32 } from '../codecs/compact';
+import { Compact64 } from '../codecs/compact';
 import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
 import withTemplateAddress from '../codecs/withTemplateAddress';
@@ -23,7 +23,7 @@ const SpawnPayload = Struct({
 
 const SpendArguments = Struct({
   Destination: Address,
-  Amount: Compact32,
+  Amount: Compact64,
 });
 
 const SpendPayload = Struct({
