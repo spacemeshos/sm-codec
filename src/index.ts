@@ -1,6 +1,6 @@
 export { default as TemplateRegistry } from './registry';
 export { default as Transaction } from './transaction';
-export { sha256 as hash } from './utils/crypto';
+export { default as hash } from './utils/hash';
 export { padBytes, padAddress } from './utils/padBytes';
 export * from './template';
 export * from './codecs/core';
