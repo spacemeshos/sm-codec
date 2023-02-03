@@ -48,7 +48,7 @@ export const Methods = {
     withTemplateAddress(SINGLE_SIG_TEMPLATE_ADDRESS, SpawnPayload),
     SingleSig
   ),
-  Spend: newT(1, SpendPayload, SingleSig),
+  Spend: newT(16, SpendPayload, SingleSig),
 };
 
 const SingleSigTemplate = {
@@ -56,7 +56,7 @@ const SingleSigTemplate = {
   publicKey: SINGLE_SIG_TEMPLATE_ADDRESS,
   methods: {
     0: Methods.Spawn,
-    1: Methods.Spend,
+    16: Methods.Spend,
   } as const,
 };
 

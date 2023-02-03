@@ -61,7 +61,7 @@ describe('SingleSigTemplate', () => {
     expect(serializeBigInts(tx)).toEqual(serializeBigInts(expected));
   });
   it('spend', () => {
-    const tpl = SingleSigAccount.methods[1];
+    const tpl = SingleSigAccount.methods[16];
     const principal = Uint8Array.from([
       0, 0, 0, 0, 107, 14, 132, 231, 192, 227, 195, 127, 55, 8, 231, 230, 122,
       228, 173, 236, 117, 74, 243, 127,
