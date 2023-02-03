@@ -1,5 +1,5 @@
-import { Bytes, CodecType, Struct } from 'scale-ts';
-import { Compact32, Compact8 } from './compact';
+import { Bytes, CodecType } from 'scale-ts';
+import { Compact32, Compact64 } from './compact';
 //
 export const ADDRESS_BYTES_LENGTH = 24;
 
@@ -9,10 +9,7 @@ export type Address = CodecType<typeof Address>;
 export const PublicKey = Bytes(32);
 export type PublicKey = CodecType<typeof PublicKey>;
 
-export const Nonce = Struct({
-  Counter: Compact32,
-  Bitfield: Compact8,
-});
+export const Nonce = Compact64;
 export type Nonce = CodecType<typeof Nonce>;
 
 export const GasPrice = Compact32;
