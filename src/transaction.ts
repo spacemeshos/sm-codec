@@ -4,7 +4,7 @@ import { SingleSig, MultiSig } from './codecs/signatures';
 import { Codec, Struct } from 'scale-ts';
 import TxCodec from './codecs/tx';
 import { concatBytes } from './utils/bytes';
-import { sha256 } from './utils/crypto';
+import hash from './utils/hash';
 import { padAddress } from './utils/padBytes';
 
 export interface Payload {
@@ -67,7 +67,7 @@ class Transaction<SP extends Payload, T extends Payload, S> {
       Address.enc(this.address),
       this.spawnArgsCodec.enc(spawnArgs)
     );
-    return padAddress(sha256(bytes).slice(12));
+    return padAddress(hash(bytes).slice(12));
   }
   decode(bytes: Uint8Array) {
     const codec = Struct({
