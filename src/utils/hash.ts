@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+import { blake3 } from '@noble/hashes/blake3';
+import { Input } from '@noble/hashes/utils';
 
-const hash = (input: crypto.BinaryLike) =>
-  Uint8Array.from(crypto.createHash('sha256').update(input).digest());
+const hash = (input: Input) => blake3(input);
 
 export default hash;

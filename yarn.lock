@@ -567,6 +567,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@noble/hashes@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.2.0.tgz#a3150eeb09cc7ab207ebf6d7b9ad311a9bdbed12"
+  integrity sha512-FZfhjEDbT5GRswV3C6uvLPHMiVD6lQBmpoX5+eSiPaMTXte/IKqI5dykDxzZB/WBeK/CDuQRBWarPdi3FNY2zQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -611,13 +616,6 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@spacemesh/address-wasm/-/address-wasm-0.2.0.tgz#7773efb5013292bd787f02f0b47fa4b4fa128145"
   integrity sha512-Q1ZQq0swhLPrz3WqOF09Umgq6L99k5aNVsa103Ne+doEMmpiSR8puLUBY9yReeqM/70AE8SAGBbvsg9YSCVnAg==
-
-"@spacemesh/sm-codec@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@spacemesh/sm-codec/-/sm-codec-0.2.1.tgz#99a8ee0cfed126d67325929c372554ba0bb19713"
-  integrity sha512-XIbUeaK9XYQhOmox/fEPvwQyvzxTPWEsBpj4+t7aDj9E2IYFoA9Aou8kqmtBmOj+QKbs+qZlNJOJxeNtFrD7Zg==
-  dependencies:
-    scale-ts "^0.2.11"
 
 "@types/babel__core@^7.1.14":
   version "7.1.19"
