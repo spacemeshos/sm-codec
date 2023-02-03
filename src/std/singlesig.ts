@@ -3,7 +3,7 @@ import { Compact64 } from '../codecs/compact';
 import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
 import withTemplateAddress from '../codecs/withTemplateAddress';
-import Transaction from '../transaction';
+import Transaction, { Payload } from '../transaction';
 import { bytesToHex } from '../utils/hex';
 import { padAddress } from '../utils/padBytes';
 
@@ -33,7 +33,7 @@ const SpendPayload = Struct({
 });
 
 // Template
-const newT = <T, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
+const newT = <T extends Payload, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
   new Transaction({
     address: SINGLE_SIG_TEMPLATE_ADDRESS,
     methodSelector: n,
@@ -48,7 +48,7 @@ export const Methods = {
     withTemplateAddress(SINGLE_SIG_TEMPLATE_ADDRESS, SpawnPayload),
     SingleSig
   ),
-  Spend: newT(1, SpendPayload, SingleSig),
+  Spend: newT(16, SpendPayload, SingleSig),
 };
 
 const SingleSigTemplate = {
@@ -56,7 +56,7 @@ const SingleSigTemplate = {
   publicKey: SINGLE_SIG_TEMPLATE_ADDRESS,
   methods: {
     0: Methods.Spawn,
-    1: Methods.Spend,
+    16: Methods.Spend,
   } as const,
 };
 
