@@ -1,9 +1,9 @@
-import { Codec, Struct } from 'scale-ts';
+import { Codec, CodecType, Struct } from 'scale-ts';
 import { Compact64 } from '../codecs/compact';
 import { Address, GasPrice, Nonce, PublicKey } from '../codecs/core';
 import { SingleSig } from '../codecs/signatures';
 import withTemplateAddress from '../codecs/withTemplateAddress';
-import Transaction, { Payload } from '../transaction';
+import Transaction, { Payload, TransactionData } from '../transaction';
 import { bytesToHex } from '../utils/hex';
 import { padAddress } from '../utils/padBytes';
 
@@ -31,6 +31,12 @@ const SpendPayload = Struct({
   GasPrice,
   Arguments: SpendArguments,
 });
+
+export type SpawnPayload = CodecType<typeof SpawnPayload>;
+export type SpendPayload = CodecType<typeof SpendPayload>;
+
+export type SpawnTransaction = TransactionData<SpawnPayload>;
+export type SpendTransaction = TransactionData<SpendPayload>;
 
 // Template
 const newT = <T extends Payload, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
