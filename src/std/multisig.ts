@@ -1,21 +1,22 @@
-import { Codec, CodecType, Struct } from 'scale-ts';
-import { Compact64 } from '../codecs/compact';
+import { Codec, CodecType, Struct, Vector } from 'scale-ts';
+import { Compact64, Compact8 } from '../codecs/compact';
 import { Address, PublicKey } from '../codecs/core';
-import { SingleSig } from '../codecs/signatures';
+import { MultiSig } from '../codecs/signatures';
 import withTemplateAddress from '../codecs/withTemplateAddress';
-import Transaction, { Payload, TransactionData } from '../transaction';
+import Transaction, { Payload } from '../transaction';
 import { toBytes } from '../utils/hex';
 import { TxPayload } from './common';
 
 // Constants
-export const SINGLE_SIG_TEMPLATE_ADDRESS =
-  '000000000000000000000000000000000000000000000001';
+export const MULTI_SIG_TEMPLATE_ADDRESS =
+  '000000000000000000000000000000000000000000000002';
 
-const byteAddress = toBytes(SINGLE_SIG_TEMPLATE_ADDRESS);
+const byteAddress = toBytes(MULTI_SIG_TEMPLATE_ADDRESS);
 
 // Codecs
 const SpawnArguments = Struct({
-  PublicKey,
+  Required: Compact8,
+  PublicKeys: Vector(PublicKey),
 });
 
 const SpendArguments = Struct({
@@ -25,10 +26,6 @@ const SpendArguments = Struct({
 
 export type SpawnArguments = CodecType<typeof SpawnArguments>;
 export type SpendArguments = CodecType<typeof SpendArguments>;
-export type SpawnPayload = CodecType<typeof SpawnPayload>;
-export type SpendPayload = CodecType<typeof SpendPayload>;
-export type SpawnTransaction = TransactionData<SpawnPayload>;
-export type SpendTransaction = TransactionData<SpendPayload>;
 
 const SpawnPayload = TxPayload(SpawnArguments);
 const SpendPayload = TxPayload(SpendArguments);
@@ -44,12 +41,12 @@ const newT = <T extends Payload, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
   });
 
 export const Methods = {
-  Spawn: newT(0, withTemplateAddress(byteAddress, SpawnPayload), SingleSig),
-  Spend: newT(16, SpendPayload, SingleSig),
+  Spawn: newT(0, withTemplateAddress(byteAddress, SpawnPayload), MultiSig),
+  Spend: newT(16, SpendPayload, MultiSig),
 };
 
-const SingleSigTemplate = {
-  key: SINGLE_SIG_TEMPLATE_ADDRESS,
+const MultiSigTemplate = {
+  key: MULTI_SIG_TEMPLATE_ADDRESS,
   publicKey: byteAddress,
   methods: {
     0: Methods.Spawn,
@@ -57,4 +54,4 @@ const SingleSigTemplate = {
   },
 } as const;
 
-export default SingleSigTemplate;
+export default MultiSigTemplate;

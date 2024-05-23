@@ -1,16 +1,17 @@
-export { default as TemplateRegistry } from './registry';
-export { default as Transaction } from './transaction';
 export { default as hash } from './utils/hash';
 export { padBytes, padAddress } from './utils/padBytes';
-export * from './template';
-export * from './codecs/core';
-export * from './codecs/compact';
-export * from './codecs/signatures';
-export { StdTemplates, StdPublicKeys } from './std';
-export { default as SingleSigTemplate } from './std/singlesig';
+
+export * as Codecs from './codecs';
+export { default as TemplateRegistry } from './registry';
+
+export * from './std';
 export type {
-  SpawnPayload,
-  SpendPayload,
+  TemeplateArgumentsMap,
   SpawnTransaction,
   SpendTransaction,
-} from './std/singlesig';
+} from './std';
+
+export { default as SingleSigTemplate } from './std/singlesig';
+export { default as MultiSigTemplate } from './std/multisig';
+export { default as VaultTemplate } from './std/vault';
+export { default as VestingTemplate } from './std/vesting';

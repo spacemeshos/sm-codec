@@ -1,6 +1,5 @@
 import { StdTemplates } from './std';
-import { Template } from './template';
-import { bytesToHex, toHex } from './utils/hex';
+import { toHex } from './utils/hex';
 
 type DeepWriteable<T> = {
   -readonly [P in keyof T]: T[P] extends readonly []
@@ -12,18 +11,14 @@ type RTemplates = typeof TemplateRegistry.templates;
 type RTemplate<A> = A extends keyof RTemplates ? RTemplates[A] : never;
 type RMethods<A> = RTemplate<A>['methods'];
 type RMethodselectors<A> = keyof RMethods<A>;
-// type RMethod<A, MS> = MS extends RMethodselectors<A> ? RMethods<A>[MS] : never;
 
+// Deprecated
+// Keeping it for a backward-compatibility
 class TemplateRegistry {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static templates: typeof StdTemplates | { [key: string]: Template } = {
+  static templates = {
     ...StdTemplates,
   };
 
-  static register(template: Template) {
-    const pk = bytesToHex(template.publicKey);
-    this.templates[pk] = template;
-  }
   static get<A extends keyof RTemplates, MS extends RMethodselectors<A>>(
     address: A | Uint8Array,
     methodSelector: MS
@@ -43,19 +38,6 @@ class TemplateRegistry {
     }
     const methods = this.templates[key].methods as DeepWriteable<RMethods<A>>;
     return methods[methodSelector];
-  }
-
-  static hasTemplate(address: string | Uint8Array) {
-    const key = toHex(address);
-    return !!this.templates[key];
-  }
-
-  static hasMethod<
-    A extends string,
-    MS extends keyof typeof TemplateRegistry.templates[A]['methods']
-  >(address: A, methodSelector: MS) {
-    const key = toHex(address);
-    return !!this.templates[key].methods[methodSelector];
   }
 }
 
