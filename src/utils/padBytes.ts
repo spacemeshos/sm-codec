@@ -1,4 +1,4 @@
-import { ADDRESS_BYTES_LENGTH } from '../codecs/core';
+import { ADDRESS_BYTES_LENGTH } from '../codecs/constants';
 
 export const padBytes =
   (maxLength: number) =>

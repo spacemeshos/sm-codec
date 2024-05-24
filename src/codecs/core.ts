@@ -1,8 +1,6 @@
 import { Bytes, CodecType } from 'scale-ts';
 import { Compact32, Compact64 } from './compact';
-//
-export const ADDRESS_BYTES_LENGTH = 24;
-
+import { ADDRESS_BYTES_LENGTH } from './constants';
 export const Address = Bytes(ADDRESS_BYTES_LENGTH);
 export type Address = CodecType<typeof Address>;
 

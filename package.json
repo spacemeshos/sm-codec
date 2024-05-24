@@ -1,8 +1,9 @@
 {
   "name": "@spacemesh/sm-codec",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Spacemesh Transaction Codec library",
   "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "build": "yarn clean:lib && tsc -p ./tsconfig.build.json",
     "test": "jest",
