@@ -1,4 +1,4 @@
-import { Bytes, CodecType, createCodec, Struct, u8 } from 'scale-ts';
+import { Bytes, CodecType, createCodec, Struct } from 'scale-ts';
 import { toBytes } from '../utils/hex';
 import { Compact8 } from './compact';
 
@@ -25,8 +25,8 @@ export const Signatures = createCodec(
       input instanceof Uint8Array
         ? input
         : typeof input === 'string'
-        ? toBytes(input)
-        : new Uint8Array(input);
+          ? toBytes(input)
+          : new Uint8Array(input);
 
     const parts: MultiSigPart[] = [];
 
