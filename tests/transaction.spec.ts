@@ -34,6 +34,7 @@ describe('Transaction', () => {
     Principal: principal,
     MethodSelector: 0n,
     Payload: decodedPayload,
+    Signature: Uint8Array.from([]),
   };
 
   const tx = new Transaction({
@@ -65,6 +66,6 @@ describe('Transaction', () => {
     const sign = uint8range(64);
     const encodedAndSignedTx = tx.sign(encodedTx, sign);
     const actual = tx.decode(encodedAndSignedTx);
-    expect(actual).toEqual({ ...decodedTx, signature: sign });
+    expect(actual).toEqual({ ...decodedTx, Signature: sign });
   });
 });

@@ -76,7 +76,7 @@ class Transaction<SP extends Payload, T extends Payload, S> {
     });
     try {
       const { txDetails, sig } = codec.dec(bytes);
-      return <TransactionData<T>>{ ...txDetails, signature: sig };
+      return <TransactionData<T>>{ ...txDetails, Signature: sig };
     } catch (err) {
       return this.codec.dec(bytes);
     }
