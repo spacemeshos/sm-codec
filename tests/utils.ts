@@ -5,8 +5,8 @@ export const serializeBigInts = (x) =>
       typeof v === 'bigint'
         ? v.toString()
         : typeof v === 'object' &&
-          !(v instanceof Array || v instanceof Uint8Array)
-        ? serializeBigInts(v)
-        : v,
+            !(v instanceof Array || v instanceof Uint8Array)
+          ? serializeBigInts(v)
+          : v,
     ])
   );

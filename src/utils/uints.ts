@@ -5,14 +5,15 @@ export type IsPositive<N extends number> = `${N}` extends `-${string}`
 export type IsInteger<N extends number> = `${N}` extends `${string}.${string}`
   ? never
   : `${N}` extends `-${string}.${string}`
-  ? never
-  : number;
+    ? never
+    : number;
 
-export type IsUint<N extends number> = IsPositive<N> extends true
-  ? IsInteger<N> extends number
-    ? number
-    : never
-  : never;
+export type IsUint<N extends number> =
+  IsPositive<N> extends true
+    ? IsInteger<N> extends number
+      ? number
+      : never
+    : never;
 
 ///
 ///
