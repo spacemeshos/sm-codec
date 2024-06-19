@@ -6,15 +6,13 @@ See usage examples below:
 
 ```js
 // Import
-import { Stdtemplates, StdPublicKeys, StdMethods } from '@spacemesh/sm-codec';
+import { SingleSigTemplate, StdMethods } from '@spacemesh/sm-codec';
 import ed25519 from '@spacemesh/ed25519-wasm';
 
 // SingleSig example
-(async () => {
-  // Get SingleSig template
-  const singleSig = StdTemplates[StdPublicKeys.SingleSig];
+(() => {
   // Get method
-  const spawnTpl = singleSig.methods[StdMethods.Spawn];
+  const spawnTpl = SingleSigTemplate.methods[StdMethods.Spawn];
 
   // Prepare SpawnPayload
   const spawnPayload = {
@@ -23,7 +21,7 @@ import ed25519 from '@spacemesh/ed25519-wasm';
     },
   };
   // Calculate Principal address (of your new account)
-  const principal = spawnTpl.principal(spawnPayload);
+  const principal = spawnTpl.principal(spawnPayload.Arguments);
   // Encode SpawnTransaction
   const rawTx = spawnTpl.encode(principal, spawnPayload);
   // Get transaction hash, it is used in signing
@@ -35,8 +33,7 @@ import ed25519 from '@spacemesh/ed25519-wasm';
 
   // Note: Principal method exists on any method
   // So this example will work as well:
-  singleSig.methods[StdMethods.Spend].principal(spawnPayload);
-
+  SingleSigTemplate.methods[StdMethods.Spend].principal(spawnPayload.Arguments);
 })();
   ```
 
