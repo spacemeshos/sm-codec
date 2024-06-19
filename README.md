@@ -7,7 +7,7 @@ See usage examples below:
 ```js
 // Import
 import { SingleSigTemplate, StdMethods } from '@spacemesh/sm-codec';
-import ed25519 from '@spacemesh/ed25519-wasm';
+import { sign } from '@noble/ed25519';
 
 // SingleSig example
 (() => {
@@ -16,6 +16,8 @@ import ed25519 from '@spacemesh/ed25519-wasm';
 
   // Prepare SpawnPayload
   const spawnPayload = {
+    Nonce: 0n,
+    GasPrice: 1n,
     Arguments: {
       PublicKey: Uint8Array.from([/* your public key: 32 bytes */]),
     },
@@ -27,7 +29,7 @@ import ed25519 from '@spacemesh/ed25519-wasm';
   // Get transaction hash, it is used in signing
   const txHash = hash(rawTx);
   // Then use `ed25519` library to sign the hash with your private key
-  const sig = ed25519.sign(myPrivateKey, txHash);
+  const sig = sign(myPrivateKey, txHash);
   // And finally sign tx (actualy it concatenates bytes)
   const signedTx = spawnTpl.sign(rawTx, sig);
 
