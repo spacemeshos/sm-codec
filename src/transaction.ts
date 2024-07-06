@@ -1,7 +1,7 @@
 import { Address } from './codecs/core';
 import { Uint8 } from './utils/uints';
 import { SingleSig, MultiSig } from './codecs/signatures';
-import { Codec, Struct } from 'scale-ts';
+import { Codec } from 'scale-ts';
 import TxCodec from './codecs/tx';
 import { concatBytes } from './utils/bytes';
 import hash from './utils/hash';
@@ -70,13 +70,20 @@ class Transaction<SP extends Payload, T extends Payload, S> {
     return padAddress(hash(bytes).slice(12));
   }
   decode(bytes: Uint8Array) {
-    const codec = Struct({
-      txDetails: this.codec,
-      sig: this.sigCodec,
-    });
+    const txDetails = this.codec.dec(bytes);
+    const txDetailsLen = this.codec.enc(txDetails).length;
     try {
-      const { txDetails, sig } = codec.dec(bytes);
-      return { ...txDetails, Signature: sig } as unknown as TransactionData<T>;
+      const rest = bytes.slice(txDetailsLen, Infinity);
+      const sig = this.sigCodec.dec(rest);
+      const sigDetails =
+        this.sigCodec === (MultiSig as S)
+          ? {
+              Signatures: sig,
+            }
+          : {
+              Signature: sig,
+            };
+      return { ...txDetails, ...sigDetails } as unknown as TransactionData<T>;
     } catch (err) {
       return this.codec.dec(bytes);
     }
