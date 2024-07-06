@@ -34,7 +34,7 @@ export const Signatures = createCodec(
     while (rest.length > 0) {
       const part = MultiSigPart.dec(rest);
       const len = MultiSigPart.enc(part).length;
-      rest = rest.slice(len);
+      rest = rest.slice(len, Infinity);
       parts.push(part);
     }
     return parts;
