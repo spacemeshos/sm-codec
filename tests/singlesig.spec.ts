@@ -17,7 +17,7 @@ describe('SingleSigTemplate', () => {
       ])
     );
   });
-  it('spawn', () => {
+  it('self-spawn', () => {
     const tpl = SingleSigAccount.methods[0];
 
     const raw = Uint8Array.from([
