@@ -19,6 +19,11 @@ const SpawnArguments = Struct({
   PublicKeys: Vector(PublicKey),
 });
 
+const SpendArguments = Struct({
+  Destination: Address,
+  Amount: Compact64,
+});
+
 const DrainVaultArguments = Struct({
   Vault: Address,
   Destination: Address,
@@ -26,9 +31,12 @@ const DrainVaultArguments = Struct({
 });
 
 const SpawnPayload = TxPayload(SpawnArguments);
+
+const SpendPayload = TxPayload(SpendArguments);
 const DrainPayload = TxPayload(DrainVaultArguments);
 
 export type SpawnArguments = CodecType<typeof SpawnArguments>;
+export type SpendArguments = CodecType<typeof SpendArguments>;
 export type DrainArguments = CodecType<typeof DrainVaultArguments>;
 
 // Template
@@ -43,6 +51,7 @@ const newT = <T extends Payload, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
 
 export const Methods = {
   Spawn: newT(0, withTemplateAddress(byteAddress, SpawnPayload), MultiSig),
+  Spend: newT(16, SpendPayload, MultiSig),
   Drain: newT(17, DrainPayload, MultiSig),
 };
 
@@ -51,6 +60,7 @@ const VestingTemplate = {
   publicKey: byteAddress,
   methods: {
     0: Methods.Spawn,
+    16: Methods.Spend,
     17: Methods.Drain,
   },
 } as const;
