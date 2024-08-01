@@ -89,6 +89,16 @@ class Transaction<SP extends Payload, T extends Payload, S> {
     }
   }
 
+  decodeWithoutSignatures(bytes: Uint8Array) {
+    const txDetails = this.codec.dec(bytes);
+    const txDetailsLen = this.codec.enc(txDetails).length;
+    const rest = bytes.slice(txDetailsLen, Infinity);
+    return {
+      tx: txDetails,
+      rest,
+    };
+  }
+
   sign(rawTx: Uint8Array, signature: S) {
     const sig = this.sigCodec.enc(signature);
     return concatBytes(rawTx, sig);

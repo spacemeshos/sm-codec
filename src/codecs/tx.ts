@@ -9,6 +9,13 @@ export const TxHeader = Struct({
   MethodSelector: Compact8,
 });
 
+export const SpawnTxHeader = Struct({
+  TransactionType: Compact8,
+  Principal: Address,
+  MethodSelector: Compact8,
+  TemplateAddress: Address,
+});
+
 const TxCodec = <T extends Payload>(txCodec: Codec<T>) =>
   Struct({
     TransactionType: Compact8,
