@@ -29,7 +29,7 @@ import { sign } from '@noble/ed25519';
   // Get transaction hash, it is used in signing
   const txHash = hash(rawTx);
   // Then use `ed25519` library to sign the hash with your private key
-  const sig = sign(myPrivateKey, txHash);
+  const sig = sign(txHash, myPrivateKey);
   // And finally sign tx (actualy it concatenates bytes)
   const signedTx = spawnTpl.sign(rawTx, sig);
 
