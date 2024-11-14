@@ -15,3 +15,5 @@ export { default as SingleSigTemplate } from './std/singlesig';
 export { default as MultiSigTemplate } from './std/multisig';
 export { default as VaultTemplate } from './std/vault';
 export { default as VestingTemplate } from './std/vesting';
+
+export * as Athena from './athena';
