@@ -1,13 +1,6 @@
-import {
-  Bytes,
-  Codec,
-  CodecType,
-  createCodec,
-  Struct,
-  u8,
-  Vector,
-} from 'scale-ts';
+import { Codec, CodecType, createCodec, Struct, u8, Vector } from 'scale-ts';
 import { Address, Compact64, Compact8 } from '../codecs';
+import Signature from './signature';
 
 const AthenaTx = Struct({
   Version: Compact8,
@@ -15,7 +8,7 @@ const AthenaTx = Struct({
   Nonce: Compact64,
   GasPrice: Compact64,
   Payload: Vector(u8),
-  Signature: Bytes(64), // TODO: Add support of MultiSig?
+  Signature: Signature,
 });
 
 export type AthenaTx = CodecType<typeof AthenaTx>;
