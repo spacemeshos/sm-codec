@@ -25,17 +25,19 @@ export type PrincipalSpawnArgs = CodecType<typeof PrincipalSpawnArgs>;
 export const principal = (spawnArgs: PrincipalSpawnArgs) =>
   computePrincipal(TEMPLATE_PUBKEY, PrincipalSpawnArgs.enc(spawnArgs));
 
-export const SpawnPayload = WithMethodSelector(
-  METHODS.SPAWN,
-  Struct({
-    PubKey: PublicKey,
-  })
-);
+const SpawnArguments = Struct({
+  PubKey: PublicKey,
+});
 
-export const SpendPayload = WithMethodSelector(
-  METHODS.SPEND,
-  Struct({
-    Recipient: Address,
-    Amount: u64,
-  })
-);
+export type SpawnArguments = CodecType<typeof SpawnArguments>;
+
+export const SpawnPayload = WithMethodSelector(METHODS.SPAWN, SpawnArguments);
+
+const SpendArguments = Struct({
+  Recipient: Address,
+  Amount: u64,
+});
+
+export type SpendArguments = CodecType<typeof SpendArguments>;
+
+export const SpendPayload = WithMethodSelector(METHODS.SPEND, SpendArguments);
