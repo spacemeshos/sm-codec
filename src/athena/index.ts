@@ -1,4 +1,5 @@
 export { default as Tx, Wrap } from './tx';
+export type { AthenaTx as OpaqueTx, Athena as TypedTx } from './tx';
 export { computePrincipal } from './principal';
 export * as Wallet from './wallet';
 
