@@ -7,7 +7,7 @@ import {
   METHODS_HEX,
 } from '../src/athena/wallet';
 import { Tx as Athena, Templates } from '../src/athena';
-import { HexString, hexToBytes } from '../src/utils/hex';
+import { HexString, hexToBytes, toHex } from '../src/utils/hex';
 import Signature from '../src/athena/signature';
 
 describe('Athena', () => {
@@ -22,8 +22,6 @@ describe('Athena', () => {
       );
       const encodedSignature = Signature.enc(signature);
       const decodedSignature = Signature.dec(encodedSignature);
-      console.log('encodedSignature', encodedSignature);
-      console.log('decodedSignature', decodedSignature);
       expect(decodedSignature).toEqual(
         Uint8Array.from([
           0xd7, 0x0b, 0xb2, 0xb1, 0xc4, 0xad, 0x5a, 0x8b, 0xd2, 0xd6, 0xc4,
@@ -49,16 +47,16 @@ describe('Athena', () => {
     ];
     const addresses = [
       [
-        0, 0, 0, 0, 174, 95, 18, 201, 13, 221, 194, 216, 132, 50, 205, 191, 246,
-        12, 115, 138, 244, 103, 7, 237,
+        0, 0, 0, 0, 52, 203, 97, 242, 27, 93, 247, 12, 25, 0, 167, 153, 13, 77,
+        254, 30, 203, 107, 24, 1,
       ],
       [
-        0, 0, 0, 0, 128, 74, 119, 204, 231, 150, 159, 15, 14, 187, 27, 172, 17,
-        89, 153, 135, 232, 233, 39, 59,
+        0, 0, 0, 0, 164, 119, 201, 249, 157, 144, 94, 71, 215, 3, 27, 167, 3,
+        18, 188, 245, 23, 97, 192, 254,
       ],
       [
-        0, 0, 0, 0, 44, 107, 128, 244, 137, 54, 223, 235, 64, 170, 68, 12, 19,
-        117, 148, 184, 120, 115, 112, 213,
+        0, 0, 0, 0, 254, 207, 92, 83, 76, 21, 199, 192, 121, 101, 89, 184, 72,
+        28, 129, 82, 5, 26, 183, 60,
       ],
     ];
 
@@ -68,16 +66,11 @@ describe('Athena', () => {
           expect(
             computePrincipal(
               TEMPLATE_PUBKEY,
-              PrincipalSpawnArgs.enc({
-                Nonce: 0n,
-                Balance: 0n,
-                Payload: hexToBytes(pubKey),
-              })
+              PrincipalSpawnArgs.enc(hexToBytes(pubKey))
             )
           ).toEqual(Uint8Array.from(bytes));
         });
       };
-
       checkPrincipal(pubkeys[0], addresses[0]);
       checkPrincipal(pubkeys[1], addresses[1]);
       checkPrincipal(pubkeys[2], addresses[2]);
@@ -111,17 +104,17 @@ describe('Athena', () => {
         checkSpawn(
           0,
           '9d4071916ce4f0d3dd7d0928ffed5bf6f9d24c73f82fe7629e7b3fdb953a76c4e315d33012dcf59f8b9dea823b900af518531697f658a1470c99e98371afb70f',
-          '0400000000ae5f12c90dddc2d88432cdbff60c738af46707ed0004980103f53f2080f6bec05666f283c01f51ac9213d536dda6b80a8018cd8342c5deb710c49ebaaf9d4071916ce4f0d3dd7d0928ffed5bf6f9d24c73f82fe7629e7b3fdb953a76c4e315d33012dcf59f8b9dea823b900af518531697f658a1470c99e98371afb70f'
+          '040000000034cb61f21b5df70c1900a7990d4dfe1ecb6b18010004980103f53f2080f6bec05666f283c01f51ac9213d536dda6b80a8018cd8342c5deb710c49ebaaf9d4071916ce4f0d3dd7d0928ffed5bf6f9d24c73f82fe7629e7b3fdb953a76c4e315d33012dcf59f8b9dea823b900af518531697f658a1470c99e98371afb70f'
         );
         checkSpawn(
           1,
           'fcac27b0e2a11d66e4410987e7de00b490d319c23d307e07d2811da3b9aa6485c52fc3f7afc58a4f94be0950cc3863d3203e3c3d7bb9635b274a02421363e502',
-          '0400000000804a77cce7969f0f0ebb1bac11599987e8e9273b0004980103f53f20809dff74f69ac4cec11bfada720ba6d4921f055c44325658f545a710f5c13554a2fcac27b0e2a11d66e4410987e7de00b490d319c23d307e07d2811da3b9aa6485c52fc3f7afc58a4f94be0950cc3863d3203e3c3d7bb9635b274a02421363e502'
+          '0400000000a477c9f99d905e47d7031ba70312bcf51761c0fe0004980103f53f20809dff74f69ac4cec11bfada720ba6d4921f055c44325658f545a710f5c13554a2fcac27b0e2a11d66e4410987e7de00b490d319c23d307e07d2811da3b9aa6485c52fc3f7afc58a4f94be0950cc3863d3203e3c3d7bb9635b274a02421363e502'
         );
         checkSpawn(
           2,
           '0f6dbdd3a9f7ba34f92d075bfcf312f877d81a47d60cf3c2d4ecce71cd03db08b85a9a640a4f2e172429c5ec98a1f9047a5ec625a7dff3dd9a5fc98937d9e202',
-          '04000000002c6b80f48936dfeb40aa440c137594b8787370d50004980103f53f2080b3f914dd6900835da712d79cfee7c571edb39e78fc30fa2d2fb0e5f89f97ff580f6dbdd3a9f7ba34f92d075bfcf312f877d81a47d60cf3c2d4ecce71cd03db08b85a9a640a4f2e172429c5ec98a1f9047a5ec625a7dff3dd9a5fc98937d9e202'
+          '0400000000fecf5c534c15c7c0796559b8481c8152051ab73c0004980103f53f2080b3f914dd6900835da712d79cfee7c571edb39e78fc30fa2d2fb0e5f89f97ff580f6dbdd3a9f7ba34f92d075bfcf312f877d81a47d60cf3c2d4ecce71cd03db08b85a9a640a4f2e172429c5ec98a1f9047a5ec625a7dff3dd9a5fc98937d9e202'
         );
         /* eslint-enable max-len */
       });
@@ -167,7 +160,7 @@ describe('Athena', () => {
     describe('spend tx', () => {
       const goldenTx =
         // eslint-disable-next-line max-len
-        '0400000000ae5f12c90dddc2d88432cdbff60c738af46707ed136645961129cc0db3049801fb1784308000000000ae5f12c90dddc2d88432cdbff60c738af46707edc3aa4a81e7ca43fbd70bb2b1c4ad5a8bd2d6c4e21a8a19031d1f8c9074776ab2b3ad9aa3f04d6561a4018d8a56153cd2ac16bf56eb6c9bc167030964d92cef5ec08a844dc018cd04';
+        '040000000034cb61f21b5df70c1900a7990d4dfe1ecb6b1801136645961129cc0db3049801fb178430800000000034cb61f21b5df70c1900a7990d4dfe1ecb6b1801c3aa4a81e7ca43fbd70bb2b1c4ad5a8bd2d6c4e21a8a19031d1f8c9074776ab2b3ad9aa3f04d6561a4018d8a56153cd2ac16bf56eb6c9bc167030964d92cef5ec08a844dc018cd04';
 
       it('works', () => {
         const spendPayload = SpendPayload.enc({
@@ -214,11 +207,7 @@ describe('Athena', () => {
       it('principal', () => {
         const addr = Templates[
           '000000000000000000000000000000000000000000000001'
-        ].principal({
-          Nonce: 0n,
-          Balance: 0n,
-          Payload: hexToBytes(pubkeys[0]),
-        });
+        ].principal(hexToBytes(pubkeys[0]));
         expect([...addr]).toEqual(addresses[0]);
       });
 
@@ -243,7 +232,7 @@ describe('Athena', () => {
         expect(tx).toEqual(
           hexToBytes(
             // eslint-disable-next-line max-len
-            '0400000000ae5f12c90dddc2d88432cdbff60c738af46707ed0004980103f53f2080f6bec05666f283c01f51ac9213d536dda6b80a8018cd8342c5deb710c49ebaaf9d4071916ce4f0d3dd7d0928ffed5bf6f9d24c73f82fe7629e7b3fdb953a76c4e315d33012dcf59f8b9dea823b900af518531697f658a1470c99e98371afb70f'
+            '040000000034cb61f21b5df70c1900a7990d4dfe1ecb6b18010004980103f53f2080f6bec05666f283c01f51ac9213d536dda6b80a8018cd8342c5deb710c49ebaaf9d4071916ce4f0d3dd7d0928ffed5bf6f9d24c73f82fe7629e7b3fdb953a76c4e315d33012dcf59f8b9dea823b900af518531697f658a1470c99e98371afb70f'
           )
         );
       });
@@ -270,7 +259,7 @@ describe('Athena', () => {
         expect(tx).toEqual(
           hexToBytes(
             // eslint-disable-next-line max-len
-            '0400000000ae5f12c90dddc2d88432cdbff60c738af46707ed136645961129cc0db3049801fb1784308000000000ae5f12c90dddc2d88432cdbff60c738af46707edc3aa4a81e7ca43fbd70bb2b1c4ad5a8bd2d6c4e21a8a19031d1f8c9074776ab2b3ad9aa3f04d6561a4018d8a56153cd2ac16bf56eb6c9bc167030964d92cef5ec08a844dc018cd04'
+            '040000000034cb61f21b5df70c1900a7990d4dfe1ecb6b1801136645961129cc0db3049801fb178430800000000034cb61f21b5df70c1900a7990d4dfe1ecb6b1801c3aa4a81e7ca43fbd70bb2b1c4ad5a8bd2d6c4e21a8a19031d1f8c9074776ab2b3ad9aa3f04d6561a4018d8a56153cd2ac16bf56eb6c9bc167030964d92cef5ec08a844dc018cd04'
           )
         );
       });
