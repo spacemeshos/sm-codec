@@ -2,7 +2,7 @@ import { Codec, CodecType, Struct, Vector } from 'scale-ts';
 import { Compact64, Compact8 } from '../codecs/compact';
 import { Address, PublicKey } from '../codecs/core';
 import { MultiSig } from '../codecs/signatures';
-import withTemplateAddress from '../codecs/withTemplateAddress';
+import WithTemplateAddress from '../codecs/withTemplateAddress';
 import Transaction, { Payload } from '../transaction';
 import { toBytes } from '../utils/hex';
 import { TxPayload } from './common';
@@ -41,7 +41,7 @@ const newT = <T extends Payload, S>(n: number, pc: Codec<T>, sig: Codec<S>) =>
   });
 
 export const Methods = {
-  Spawn: newT(0, withTemplateAddress(byteAddress, SpawnPayload), MultiSig),
+  Spawn: newT(0, WithTemplateAddress(byteAddress, SpawnPayload), MultiSig),
   Spend: newT(16, SpendPayload, MultiSig),
 };
 
