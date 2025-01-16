@@ -13,6 +13,7 @@ export const Templates = {
     methods: {
       [Wallet.METHODS_HEX.SPAWN]: Wrap(Wallet.SpawnPayload),
       [Wallet.METHODS_HEX.SPEND]: Wrap(Wallet.SpendPayload),
+      [Wallet.METHODS_HEX.DEPLOY]: Wrap(Wallet.DeployPayload),
     },
   },
 };

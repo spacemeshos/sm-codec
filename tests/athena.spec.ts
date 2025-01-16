@@ -6,12 +6,14 @@ import {
   METHODS_HEX,
   principal,
   TEMPLATE_PUBKEY,
+  DeployPayload,
+  TEMPLATE_PUBKEY_HEX,
 } from '../src/athena/wallet';
 import { Tx as Athena, Templates } from '../src/athena';
 import { HexString, hexToBytes } from '../src/utils/hex';
 import Signature from '../src/athena/signature';
 import { bytesToHex } from '@noble/hashes/utils';
-import AthenaTx from '../src/athena/tx';
+import AthenaTx, { Athena as AthenaT } from '../src/athena/tx';
 
 describe('Athena', () => {
   describe('Signature', () => {
@@ -54,7 +56,7 @@ describe('Athena', () => {
       'atest1qqqqqqr87as4czxe65yvnrvstnxyjesgvt59aecaczffc',
     ].map((addr) => bech32.fromWords(bech32.decode(addr).words));
 
-    describe('compute principal', () => {
+    describe('principal', () => {
       const checkPrincipal = (pubKey: HexString, bytes: number[]) => {
         it(pubKey, () => {
           expect(principal({ PubKey: hexToBytes(pubKey) })).toEqual(
@@ -65,6 +67,13 @@ describe('Athena', () => {
       checkPrincipal(pubkeys[0], addresses[0]);
       checkPrincipal(pubkeys[1], addresses[1]);
       checkPrincipal(pubkeys[2], addresses[2]);
+
+      it('Templates[].principal()', () => {
+        const addr = Templates[TEMPLATE_PUBKEY_HEX].principal({
+          PubKey: hexToBytes(pubkeys[0]),
+        });
+        expect([...addr]).toEqual(addresses[0]);
+      });
     });
 
     describe('spawn tx', () => {
@@ -83,10 +92,6 @@ describe('Athena', () => {
               Payload: [...spawnPayload],
               Signature: Uint8Array.from([]),
             });
-
-            console.log('RESULT = ', Athena.dec(tx));
-            console.log('EXPECTED = ', Athena.dec(goldenHex));
-
             expect(bytesToHex(tx)).toEqual(goldenHex);
           });
         };
@@ -114,7 +119,6 @@ describe('Athena', () => {
             expect(args).toEqual({
               PubKey: hexToBytes(pubkeys[idx]),
             });
-            console.log('!!!', tx);
             const encArgs = SpawnPayload.enc(args);
             expect(encArgs).toEqual(Uint8Array.from(tx.Payload));
             const encTx = Athena.enc({
@@ -145,75 +149,11 @@ describe('Athena', () => {
         );
         /* eslint-enable max-len */
       });
-    });
 
-    describe('spend tx', () => {
-      const goldenTx =
-        // eslint-disable-next-line max-len
-        '0400000000d9a50b405e64f3f8fc38dc82c6f3682ffc25c618005d05049801fb178430808aa90b00997594fb45c2e995df5caa8286e21b692711f1a4fa83000000000000056a48dcfaae0acaeacdcca17256a318ac2aa7d1d29790057a6463b5dd007a963a6e9eae94206b9fc9e372766ba1de0e079e8abe266a54fa76409778baee1504';
-
-      const Recipient = Uint8Array.from(
-        bech32.fromWords(
-          bech32.decode('atest1325skqyewk20k3wzax2a7h92s2rwyxmfyuglrfqq0ty92')
-            .words
-        )
-      );
-
-      it('works', () => {
-        const spendPayload = SpendPayload.enc({
-          Recipient,
-          Amount: 33786n,
-        });
-
-        const tx = Athena.enc({
-          Version: 1n,
-          Principal: Uint8Array.from(addresses[0]),
-          TemplateAddress: undefined,
-          Nonce: 343n,
-          GasPrice: 1n,
-          Payload: [...spendPayload],
-          Signature: Buffer.from(
-            // eslint-disable-next-line max-len
-            '056a48dcfaae0acaeacdcca17256a318ac2aa7d1d29790057a6463b5dd007a963a6e9eae94206b9fc9e372766ba1de0e079e8abe266a54fa76409778baee1504',
-            'hex'
-          ),
-        });
-        expect(tx).toEqual(hexToBytes(goldenTx));
-      });
-      it('roundtrip', () => {
-        const tx = Athena.dec(goldenTx);
-        const payload = SpendPayload.dec(Uint8Array.from(tx.Payload));
-        expect(payload).toEqual({
-          Recipient,
-          Amount: 33786n,
-        });
-        const encPayload = SpendPayload.enc(payload);
-        expect(encPayload).toEqual(Uint8Array.from(tx.Payload));
-        const encTx = Athena.enc({
-          Version: 1n,
-          Principal: tx.Principal,
-          TemplateAddress: undefined,
-          Nonce: tx.Nonce,
-          GasPrice: tx.GasPrice,
-          Payload: [...encPayload],
-          Signature: tx.Signature,
-        });
-        expect(Buffer.from(encTx).toString('hex')).toEqual(goldenTx);
-      });
-    });
-
-    describe('By Templates', () => {
-      it('principal', () => {
-        const addr = Templates[
-          '000000000000000000000000000000000000000000000001'
-        ].principal({ PubKey: hexToBytes(pubkeys[0]) });
-        expect([...addr]).toEqual(addresses[0]);
-      });
-
-      it('methods[spawn]', () => {
-        const tx = Templates[
-          '000000000000000000000000000000000000000000000001'
-        ].methods[METHODS_HEX.SPAWN].enc({
+      it('Templates[].methods[spawn]()', () => {
+        const tx = Templates[TEMPLATE_PUBKEY_HEX].methods[
+          METHODS_HEX.SPAWN
+        ].enc({
           Version: 1n,
           Principal: Uint8Array.from(addresses[0]),
           TemplateAddress: TEMPLATE_PUBKEY,
@@ -232,35 +172,102 @@ describe('Athena', () => {
           )
         );
       });
+    });
 
-      it('methods[spend]', () => {
-        const Recipient = Uint8Array.from(
-          bech32.fromWords(
-            bech32.decode('atest1325skqyewk20k3wzax2a7h92s2rwyxmfyuglrfqq0ty92')
-              .words
-          )
-        );
-        const tx = Templates[
-          '000000000000000000000000000000000000000000000001'
-        ].methods[METHODS_HEX.SPEND].enc({
-          Version: 1n,
-          Principal: Uint8Array.from(addresses[0]),
-          TemplateAddress: undefined,
-          Nonce: 343n,
-          GasPrice: 1n,
-          Payload: {
-            Recipient,
-            Amount: 33786n,
-          },
-          Signature: Buffer.from([]),
+    describe('spend tx', () => {
+      const goldenTx =
+        // eslint-disable-next-line max-len
+        '0400000000d9a50b405e64f3f8fc38dc82c6f3682ffc25c618005d05049801fb178430808aa90b00997594fb45c2e995df5caa8286e21b692711f1a4fa83000000000000056a48dcfaae0acaeacdcca17256a318ac2aa7d1d29790057a6463b5dd007a963a6e9eae94206b9fc9e372766ba1de0e079e8abe266a54fa76409778baee1504';
+      const sig =
+        // eslint-disable-next-line max-len
+        '056a48dcfaae0acaeacdcca17256a318ac2aa7d1d29790057a6463b5dd007a963a6e9eae94206b9fc9e372766ba1de0e079e8abe266a54fa76409778baee1504';
+
+      const Recipient = Uint8Array.from(
+        bech32.fromWords(
+          bech32.decode('atest1325skqyewk20k3wzax2a7h92s2rwyxmfyuglrfqq0ty92')
+            .words
+        )
+      );
+      const payload = {
+        Recipient,
+        Amount: 33786n,
+      };
+      const txData: AthenaT<null> = {
+        Version: 1n,
+        Principal: Uint8Array.from(addresses[0]),
+        TemplateAddress: undefined,
+        Nonce: 343n,
+        GasPrice: 1n,
+        Payload: null,
+        Signature: hexToBytes(sig),
+      };
+
+      it('encodes', () => {
+        const spendPayload = SpendPayload.enc(payload);
+        const tx = Athena.enc({
+          ...txData,
+          Payload: [...spendPayload],
         });
+        expect(bytesToHex(tx)).toEqual(goldenTx);
+      });
+      it('decodes', () => {
+        const tx = Athena.dec(goldenTx);
+        const decodedPayload = SpendPayload.dec(Uint8Array.from(tx.Payload));
+        expect(decodedPayload).toEqual({
+          Recipient,
+          Amount: 33786n,
+        });
+      });
+      it('Templates[].methods[spend]()', () => {
+        const codec = Templates[TEMPLATE_PUBKEY_HEX].methods[METHODS_HEX.SPEND];
+        const txEncoded = codec.enc({
+          ...txData,
+          Payload: payload,
+        });
+        expect(bytesToHex(txEncoded)).toEqual(goldenTx);
+      });
+    });
 
-        expect(tx).toEqual(
-          hexToBytes(
-            // eslint-disable-next-line max-len
-            '0400000000d9a50b405e64f3f8fc38dc82c6f3682ffc25c618005d05049801fb178430808aa90b00997594fb45c2e995df5caa8286e21b692711f1a4fa83000000000000'
-          )
-        );
+    describe('deploy', () => {
+      const program = hexToBytes('736f6d6520636f6465');
+      const sig =
+        // eslint-disable-next-line max-len
+        '34efe999c79ebfa4e97e91c992378b73f4b7598803321881a45c5ba19bab68a334f7eb100a10d831333da5ef614b15b85fd5a7ade95698c2bf7a530c94f14f0b';
+      const txData: AthenaT<null> = {
+        Version: 1n,
+        Principal: Uint8Array.from(addresses[0]),
+        TemplateAddress: undefined,
+        Nonce: 222n,
+        GasPrice: 1n,
+        Payload: null,
+        Signature: hexToBytes(sig),
+      };
+      const golden =
+        '0400000000d9a50b405e64f3f8fc38dc82c6f3682ffc25c618007903044001e24cc3332824736f6d6520636f6465' +
+        sig;
+
+      it('encodes', () => {
+        const txEncoded = Athena.enc({
+          ...txData,
+          Payload: [...DeployPayload.enc(program)],
+        });
+        expect(bytesToHex(txEncoded)).toEqual(golden);
+      });
+      it('decodes', () => {
+        const txDecoded = Athena.dec(golden);
+        expect(txDecoded).toEqual({
+          ...txData,
+          Payload: [...DeployPayload.enc(program)],
+        });
+      });
+      it('Templates[].methods[deploy]()', () => {
+        const codec =
+          Templates[TEMPLATE_PUBKEY_HEX].methods[METHODS_HEX.DEPLOY];
+        const txEncoded = codec.enc({
+          ...txData,
+          Payload: program,
+        });
+        expect(bytesToHex(txEncoded)).toEqual(golden);
       });
     });
   });

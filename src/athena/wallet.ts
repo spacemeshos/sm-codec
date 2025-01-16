@@ -1,4 +1,4 @@
-import { CodecType, Struct, u64 } from 'scale-ts';
+import { Bytes, CodecType, Struct, u64 } from 'scale-ts';
 import { Address, PublicKey, WithTemplateAddress } from '../codecs';
 import { computePrincipal } from './principal';
 import WithMethodSelector from './withMethodSelector';
@@ -46,3 +46,11 @@ const SpendArguments = Struct({
 export type SpendArguments = CodecType<typeof SpendArguments>;
 
 export const SpendPayload = WithMethodSelector(METHODS.SPEND, SpendArguments);
+
+export const DeployArguments = Bytes();
+export type DeployArguments = CodecType<typeof DeployArguments>;
+
+export const DeployPayload = WithMethodSelector(
+  METHODS.DEPLOY,
+  DeployArguments
+);
