@@ -16,7 +16,7 @@ const getRestFields = <T>({
   rest: T;
 }) => rest;
 
-const withTemplateAddress = <T extends Record<string, unknown>>(
+const WithTemplateAddress = <T extends Record<string, unknown>>(
   address: Uint8Array,
   payloadCodec: Codec<T>
 ) =>
@@ -25,4 +25,4 @@ const withTemplateAddress = <T extends Record<string, unknown>>(
     (bytes) => getRestFields(withAddressCodec(payloadCodec).dec(bytes)) as T
   );
 
-export default withTemplateAddress;
+export default WithTemplateAddress;
