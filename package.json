@@ -1,6 +1,6 @@
 {
   "name": "@spacemesh/sm-codec",
-  "version": "0.9.0-athena.3",
+  "version": "0.9.0-athena.4",
   "description": "Spacemesh Transaction Codec library",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
